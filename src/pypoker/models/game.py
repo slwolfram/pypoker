@@ -23,5 +23,6 @@ class Game(db.Model):
             'blind_length': self.blind_length,
             'buyin': self.buyin,
             'type': self.gtype,
-            'start_time': self.start_time.strftime("%m/%d/%Y, %H:%M:%S")
+            'start_time': (
+                self.start_time.strftime("%m/%d/%Y, %H:%M:%S"))
         }

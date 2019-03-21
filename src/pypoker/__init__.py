@@ -6,11 +6,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pypoker.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../pypoker.db'
 db = SQLAlchemy(app)
 
-from .apis.create_game import create_game
-app.register_blueprint(create_game)
+from .apis.games_api import games
+app.register_blueprint(games)
 app.run()
             
             
