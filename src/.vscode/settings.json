@@ -1,4 +1,7 @@
 {
-    "python.pythonPath": "venv\\Scripts\\python.exe",
-    "git.ignoreLimitWarning": true
+    "python.pythonPath": "venv/bin/python",
+    "git.ignoreLimitWarning": true,
+    "files.exclude": {
+        "**/*.pyc": true
+    }
 }

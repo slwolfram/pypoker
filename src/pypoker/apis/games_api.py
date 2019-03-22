@@ -65,14 +65,11 @@ class games_api(Resource):
         games = Game.query.all()
         games_dict = []
         for game in games:
-            print(game)
             games_dict.append(game.as_dict())
         return good_request(games_dict, 200)
 
 @api.route('/games/<int:id>')
-@api.param('id', 'The game identifier')
 class game_api(Resource):
-    @api.doc('get_game')
     def get(self, id):
         try:
             game = Game.query.filter_by(id=int(id)).first()
