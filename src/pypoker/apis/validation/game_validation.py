@@ -4,7 +4,7 @@ from pypoker import db
 from pypoker.models.game import Game
 from pypoker.apis.validation.response import bad_request, good_request
 
-def validate_game_data(data):
+def validate_game(data):
     # Name
     if 'Name' not in data: 
         return bad_request("Request field 'Name' is required", 400)  
@@ -77,7 +77,7 @@ def validate_game_data(data):
     game = Game(name=name, num_seats=num_seats, turn_time=turn_time, 
                 blind_levels=blind_levels, blind_length=blind_length, 
                 buyin=buyin, gtype=gtype, start_time=start_time)
-    db.create_all()
-    db.session.add(game)
-    db.session.commit()
-    return good_request(game.as_dict(), 200)
+    print('HERE2')
+    if game.create():
+        return good_request(game.as_dict(), 201)
+    return bad_request("Couldn't create game.", 500)

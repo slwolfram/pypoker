@@ -1,4 +1,4 @@
-from card import Card
+from .card import Card
 import random
 
 
@@ -9,18 +9,28 @@ class Deck(object):
       cards: list of Card objects
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.cards = []
-        for suit in range(4):
-            for rank in range(1, 14):
-                card = Card(suit, rank)
-                self.cards.append(card)
+        if 'cards' in kwargs:
+            self.cards = kwargs['cards']
+        else:
+            for suit in range(4):
+                for rank in range(1, 14):
+                    card = Card(suit, rank)
+                    self.cards.append(card)
 
     def __str__(self):
         res = []
         for card in self.cards:
             res.append(str(card))
         return ','.join(res)
+
+    @staticmethod
+    def from_string(deck_str):
+        cards = deck_str.split(',')
+        for card in cards:
+            card = Card(int(card[0]), int(card[1]))
+        return Deck(cards=cards)
 
     def add_card(self, card):
         """Adds a card to the deck"""

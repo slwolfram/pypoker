@@ -11,6 +11,10 @@ class Player(db.Model):
     has_folded = db.Column(db.Boolean, nullable=False)
     is_winner = db.Column(db.Boolean, nullable=False)
     has_moved = db.Column(db.Boolean, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', back_populates='players')
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
+    game = db.relationship('Game', back_populates='players')
 
     def __str__(self):
         return "name:{} cash:{} hand:{} position:{}".format(

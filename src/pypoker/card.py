@@ -11,8 +11,8 @@ class Card(object):
                   "7", "8", "9", '10', "Jack", "Queen", "King", "Ace"]
 
     short_suit_names = ["c", "d", "h", "s"]
-    short_rank_names = ["0", "A", "2", "3", "4",
-                        "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    short_rank_names = ["0", "A", "2", "3", "4", "5", "6", "7",
+                        "8", "9", "10", "J", "Q", "K", "A"]
 
     def __init__(self, suit, rank):
         self.rank = rank

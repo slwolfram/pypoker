@@ -4,7 +4,7 @@ from pypoker import db
 from pypoker.models.player import Player
 from pypoker.apis.validation.response import bad_request, good_request
 
-def validate_game_data(data):
+def validate_player(data):
     # Name
     if 'Name' not in data: 
         return bad_request("Request field 'Name' is required", 400)  

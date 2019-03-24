@@ -1,12 +1,14 @@
 from flask import Flask, Blueprint, jsonify
+from flask_httpauth import HTTPBasicAuth
 from flask_restplus import Api, Resource, fields
 
-player = Blueprint('player', __name__)
-api = Api(player)
+player_bp = Blueprint('player', __name__)
+api = Api(player_bp)
 
-from pypoker.models.player import Player
-from pypoker.apis.validation.player_validation import validate_player_data
-from pypoker.apis.validation.response import bad_request, good_request
+from ..models.player import Player
+from .validation.player_validation import validate_player
+from .validation.response import bad_request, good_request
+from . import auth
 
 a_player = api.model(
     'a_player', {
@@ -33,6 +35,7 @@ a_bet = api.model(
 
 @api.route('/games/<int:id>/join')
 class join_game(Resource):
+    @auth.login_required
     @api.expect(a_player)
     def post(self, id):
         data = api.payload
@@ -40,6 +43,7 @@ class join_game(Resource):
 
 @api.route('/games/<int:game_id>/join/<int:seat_id>')
 class join_game(Resource):
+    @auth.login_required
     @api.expect(a_player)
     def post(self, game_id, seat_id):
         data = api.payload
@@ -47,11 +51,13 @@ class join_game(Resource):
 
 @api.route('/games/<int:game_id>/leave')
 class join_game(Resource):
+    @auth.login_required
     def post(self):
         pass
 
 @api.route('/players/<int:id>/fold')
 class fold(Resource):
+    @auth.login_required
     def fold(self, id):
         """
         if (self.bet_amount == game.highest_bet):
@@ -65,6 +71,7 @@ class fold(Resource):
 
 @api.route('/players/<int:id>/bet')
 class bet(Resource):
+    @auth.login_required
     @api.expect(a_bet)
     def bet(self, id):
         data = api.payload
@@ -88,6 +95,7 @@ class bet(Resource):
 @api.route('/players/<int:id>/call')
 @api.route('/players/<int:id>/check')
 class checkcall(Resource):
+    @auth.login_required
     def post(self, id):
         """
         if (self.bet_amount == game.highest_bet):
