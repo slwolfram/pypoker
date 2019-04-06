@@ -1,15 +1,9 @@
-from flask import Flask, Blueprint, jsonify
+from flask import Flask, Blueprint, request, jsonify
 from flask_httpauth import HTTPBasicAuth
-from flask_restplus import Api, Resource, fields
+from flask_restplus import Api, Resource, fields, Namespace
 
-player_bp = Blueprint('player', __name__)
-api = Api(player_bp)
 
-from ..models.player import Player
-from .validation.player_validation import validate_player
-from .validation.response import bad_request, good_request
-from . import auth
-
+api = Namespace('players', description='Player related operations')
 a_player = api.model(
     'a_player', {
         'Name': fields.String(
@@ -24,6 +18,7 @@ value, etc.)"
     }
 )
 
+
 a_bet = api.model(
     'a_bet', {
         'BetAmount': fields.Integer(
@@ -33,32 +28,97 @@ a_bet = api.model(
     }
 )
 
-@api.route('/games/<int:id>/join')
+
+from ..models.player import Player
+from .validation.player_validation import validate_player
+from .decorators import token_required
+from .response.error_response import (
+    BadRequestResponse, InternalServerErrorResponse, Error)
+from .response.valid_response import OKResponse
+from pypoker.models.user import User
+
+
+@api.route('/all')
+class get_players(Resource):
+    def get(self):
+        players = Player.fetch_all()
+        if players == -1:
+            r = InternalServerErrorResponse(
+                [Error("Backend Error")])
+            return r.get_response()
+        if players == None:
+            players = []
+        players_dict = []
+        for player in players:
+            players_dict.append(player.as_dict())
+        r = OKResponse(players_dict)
+        return r.get_response()
+
+
+@api.route('/<int:id>')
+class get_player(Resource):
+    def get(self):
+        player = Player.fetch(id=id)
+        if player is None:
+            r = BadRequestResponse(
+                [Error("Player Doesn't Exist")])
+            return r.get_response()
+        if player == -1:
+            r = InternalServerErrorResponse(
+                [Error("Backend Error")])
+            return r.get_response()
+        
+        return good_request(player.as_dict(), 200)
+
+
+@api.route('/join')
 class join_game(Resource):
-    @auth.login_required
     @api.expect(a_player)
+    @api.doc(security='apikey')
+    @token_required
     def post(self, id):
+        user = User.verify_auth_token(request.headers['X-API-KEY'])
+        print(user.as_dict())
         data = api.payload
         pass
 
-@api.route('/games/<int:game_id>/join/<int:seat_id>')
-class join_game(Resource):
-    @auth.login_required
-    @api.expect(a_player)
-    def post(self, game_id, seat_id):
-        data = api.payload
-        pass
 
-@api.route('/games/<int:game_id>/leave')
-class join_game(Resource):
-    @auth.login_required
+@api.route('/leave')
+class leave_game(Resource):
+    @api.doc(security='apikey')
+    @token_required
     def post(self):
+        user = User.verify_auth_token(request.headers['X-API-KEY'])
+        print(user.as_dict())
         pass
 
-@api.route('/players/<int:id>/fold')
+
+@api.route('/sitout')
+class sitout(Resource):
+    @api.doc(security='apikey')
+    @token_required
+    def post(self, id):
+        user = User.verify_auth_token(request.headers['X-API-KEY'])
+        print(user.as_dict())
+        """
+        if (self.bet_amount == game.highest_bet):
+            print("{} checks".format(self.name))
+            return True
+        else:
+            call_value = game.highest_bet - self.bet_amount
+            self.bet(call_value, game)
+            return True
+        """
+        pass
+
+
+@api.route('/fold')
 class fold(Resource):
-    @auth.login_required
+    @api.doc(security='apikey')
+    @token_required
     def fold(self, id):
+        user = User.verify_auth_token(request.headers['X-API-KEY'])
+        print(user.as_dict())
         """
         if (self.bet_amount == game.highest_bet):
             print("You can't fold if you can check.")
@@ -69,11 +129,15 @@ class fold(Resource):
         """
         pass
 
-@api.route('/players/<int:id>/bet')
+
+@api.route('/bet')
 class bet(Resource):
-    @auth.login_required
     @api.expect(a_bet)
+    @api.doc(security='apikey')
+    @token_required
     def bet(self, id):
+        user = User.verify_auth_token(request.headers['X-API-KEY'])
+        print(user.as_dict())
         data = api.payload
         """
         if (amount + self.bet_amount >= game.highest_bet):
@@ -92,11 +156,33 @@ class bet(Resource):
         """
         pass
 
-@api.route('/players/<int:id>/call')
-@api.route('/players/<int:id>/check')
-class checkcall(Resource):
-    @auth.login_required
+
+@api.route('/call')
+class call(Resource):
+    @api.doc(security='apikey')
+    @token_required
     def post(self, id):
+        user = User.verify_auth_token(request.headers['X-API-KEY'])
+        print(user.as_dict())
+        """
+        if (self.bet_amount == game.highest_bet):
+            print("{} checks".format(self.name))
+            return True
+        else:
+            call_value = game.highest_bet - self.bet_amount
+            self.bet(call_value, game)
+            return True
+        """
+        pass
+
+
+@api.route('/check')
+class check(Resource):
+    @api.doc(security='apikey')
+    @token_required
+    def post(self, id):
+        user = User.verify_auth_token(request.headers['X-API-KEY'])
+        print(user.as_dict())
         """
         if (self.bet_amount == game.highest_bet):
             print("{} checks".format(self.name))

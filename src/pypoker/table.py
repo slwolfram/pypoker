@@ -12,6 +12,7 @@ class Table(object):
         self.big_blind = bb
         self.disabled = False
 
+
     def asdict(self):
         return {
             'id': self.id,
@@ -23,6 +24,7 @@ class Table(object):
             'big_blind': self.big_blind,
             'disabled': self.disabled
         }
+
 
     @classmethod
     def find_by_id(cls, id):
@@ -39,6 +41,7 @@ class Table(object):
         connection.commit()
         connection.close()
         return table
+
 
     @classmethod
     def find_all_enabled(cls):
@@ -58,6 +61,7 @@ class Table(object):
         connection.commit()
         connection.close()
         return tables
+
 
     @classmethod
     def find_all(cls):

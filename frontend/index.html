@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html ng-app="pypoker" ng-cloak>
+<head>
+    <title>PyPoker UI</title>
+    <style>
+        [ng\:cloak], [ng-cloak], .ng-cloak {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>PyPoker UI</h1>
+    <br>
+    <div ng-controller="gameController">
+        <table>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
+        <tr ng-repeat = "game in games">
+            <td>{{ game.Name }}</td>
+            <td>{{ game.Type }}</td>
+        </tr>
+        </table>
+    </div>
+
+    <script src="js/angular.min.js"></script>
+    <script src="controllers.js"></script>
+
+</body>
+</html>

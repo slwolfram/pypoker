@@ -33,6 +33,7 @@ class Game(db.Model):
                 self.start_time.strftime("%m/%d/%Y, %H:%M:%S"))
         }
 
+
     def create(self):
         self.deck = str(Deck())
         print(self.deck)
@@ -45,8 +46,6 @@ class Game(db.Model):
         except Exception as e:
             print(repr(e))
         return None
-
-    def start(self):
 
 
     @staticmethod
@@ -61,6 +60,7 @@ class Game(db.Model):
         except:
             pass
         return None
+
 
     @staticmethod
     def fetch_all():

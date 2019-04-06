@@ -2,9 +2,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
     as Serializer, BadSignature, SignatureExpired)
 from flask import current_app
 from passlib.apps import custom_app_context as pwd_context
-
 from pypoker import db
-from pypoker.apis.validation.response import bad_request, good_request
 
 
 class User(db.Model):
@@ -20,23 +18,25 @@ class User(db.Model):
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
         return str(s.dumps({'id': self.id}))
 
+
     @staticmethod
     def verify_auth_token(token):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
-        except SignatureExpired:
-            return bad_request('Authentication token has expired', 401)
-        except BadSignature:
-            return bad_request('Invalid authentication token', 401)
+        except SignatureExpired or BadSignature:
+            return None
         user = User.query.get(data['id'])
-        return good_request(user.as_dict(), 200)
+        return user
+
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
 
+
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
+
 
     def as_dict(self):
         return {
@@ -47,6 +47,7 @@ class User(db.Model):
             'bankroll': self.bankroll
         }
 
+
     def create(self):
         try:
             db.create_all()
@@ -55,8 +56,9 @@ class User(db.Model):
             self = self.fetch(username=self.username)
             return self
         except:
-            pass
+            return -1
         return None
+
 
     @staticmethod
     def fetch(**kwargs):
@@ -71,13 +73,14 @@ class User(db.Model):
                 return User.query.filter_by(
                     username=kwargs['username']).first()
         except:
-            pass
+            return -1
         return None
+
 
     @staticmethod
     def fetch_all():
         try:
             return User.query.all()
         except:
-            pass
+            return -1
         return None

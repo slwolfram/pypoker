@@ -1,14 +1,12 @@
 from flask import Flask, Blueprint, jsonify
-from flask_restplus import Api, Resource, fields
-
-game_bp = Blueprint('games', __name__)
-api = Api(game_bp)
+from flask_restplus import Api, Resource, fields, Namespace
 
 from ..models.game import Game
 from .validation.game_validation import validate_game
-from .validation.response import bad_request, good_request
-from . import auth
+from .decorators import token_required
 
+
+api = Namespace('games', description='Game related operations')
 a_game = api.model(
     'a_game', {
         'Name': fields.String(
@@ -55,26 +53,37 @@ players have joined.'
     }
 )
 
-@api.route('/games')
-class game_api(Resource):
+
+@api.route('/new')
+class new_game(Resource):
     @api.expect(a_game)
+    @api.doc(security='apikey')
+    @token_required
     def post(self):
         data = api.payload
         return validate_game(data)
 
+
+@api.route('/all')
+class get_games(Resource):
     def get(self):
         games = Game.query.all()
         if games is None:
-            return bad_request('Unable to retrieve games', 500)
+            return {'error': 'Unable to retrieve games'}, 500, (
+                   {'Access-Control-Allow-Origin': '*'})
         games_dict = []
         for game in games:
             games_dict.append(game.as_dict())
-        return good_request(games_dict, 200)
+        return {'data': games_dict}, 200, (
+               {'Access-Control-Allow-Origin': '*'})
 
-@api.route('/games/<int:id>')
-class game_api(Resource):
+
+@api.route('/<int:id>')
+class get_game(Resource):
     def get(self, id):
         game = Game.fetch(id=id)
         if game is None:
-            return bad_request('Unable to retrieve game', 400)
-        return good_request(game.as_dict(), 200)
+            return {'error': 'Unable to retrieve game'}, 400, (
+                   {'Access-Control-Allow-Origin': '*'})
+        return {'data': game.as_dict()}, 200, (
+               {'Access-Control-Allow-Origin': '*'})
