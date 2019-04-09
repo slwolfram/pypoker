@@ -12,6 +12,7 @@ def validate_game(data):
     name = ""
     num_seats = 0
     turn_time = -1
+    blinds = ""
     blind_levels = []
     blind_length = ""
     buyin = ""
@@ -62,7 +63,11 @@ def validate_game(data):
                     title="Invalid attribute",
                     detail="BlindLevel - BB must be > SB"
                 ))
-        blind_levels = ','.join(blind_levels)
+        blind_levels = '|'.join(blind_levels)
+        blind_levels = blind_levels.replace('BLIND_', '')
+        blind_levels = blind_levels.replace('_', ',')
+        blinds = blind_levels.split('|')
+        blinds = blinds[0]
     # BlindLength
     if 'BlindLength' in data:
         blind_length = data['BlindLength']
@@ -136,7 +141,7 @@ def validate_game(data):
     if len(errors) != 0:
         return BadRequestResponse(errors)
     game = Game(name=name, num_seats=num_seats, turn_time=turn_time, 
-                blind_levels=blind_levels, blind_length=blind_length,
+                blind_levels=blind_levels, blinds=blinds, blind_length=blind_length,
                 buyin=buyin, gtype=gtype, start_time=start_time)
     print('HERE2')
     if not game.create():

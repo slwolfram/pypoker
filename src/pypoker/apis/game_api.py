@@ -25,7 +25,7 @@ players infinite time to make a move.'
         'BlindLevels': fields.String(
             required=True,
             description=(
-'An comma-separated list of blinds, with the format BLIND_SB_BB.'
+'An comma-separated list of blinds, wirrrtr5th the format BLIND_SB_BB.'
         )),
         'BlindLength': fields.String(
             description=(
@@ -61,7 +61,8 @@ class new_game(Resource):
     @token_required
     def post(self):
         data = api.payload
-        return validate_game(data)
+        r = validate_game(data)
+        return r.get_response()
 
 
 @api.route('/all')

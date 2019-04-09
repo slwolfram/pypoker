@@ -32,7 +32,7 @@ a_login = api.model(
         'Username': fields.String(
             description= "The user's username"
         ),
-        'Password': fields.Integer(
+        'Password': fields.String(
             required=True,
             description= "The user's password"
         ),
@@ -46,6 +46,9 @@ from .decorators import token_required
 from .validation.user_validation import (
     validate_new_user, validate_user_login)
 from .decorators import token_required
+from .response.error_response import (
+    BadRequestResponse, UnauthorizedResponse, Error)
+from .response.valid_response import OKResponse
 
 @api.route("/register")
 class register(Resource):
@@ -63,17 +66,29 @@ class login(Resource):
         data = api.payload
         user = None
         if 'Password' not in data:
-            return bad_request('Password is required to login in', 400)
+            r = BadRequestResponse([Error(
+                source='user.Password', 
+                title='Missing Required Attribute', 
+                detail='Password is required to log in'
+            )])
+            return r.get_response()
         password = data['Password']        
         if 'Username' in data:
             user = User.fetch(username=data['Username'])
         elif 'Email' in data:
             user = User.fetch(email=data['Email'])
         if user is None:
-            return bad_request('Invalid username or email', 400)
+            r = UnauthorizedResponse([Error(
+                title='Invalid Attribute', 
+                detail='Invalid username or email'
+            )])
+            return r.get_response()
         if not user.verify_password(password):
-            return bad_request(
-                'Authentication error. Bad password.', 404)
-        response = jsonify(token=str(user.generate_auth_token()))
-        response.status_code = 200
-        return response
+            r = UnauthorizedResponse([Error(
+                source='user.Password',
+                title='Access Denied', 
+                detail='Invalid password'
+            )])
+            return r.get_response()
+        r = OKResponse(data=user.generate_auth_token())
+        return r.get_response()

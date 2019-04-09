@@ -16,7 +16,10 @@ class User(db.Model):
 
     def generate_auth_token(self, expiration=6000):
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
-        return str(s.dumps({'id': self.id}))
+        token = str(s.dumps({'id': self.id}))
+        token = token.replace("b'", "")
+        token = token.replace("'", "")
+        return token
 
 
     @staticmethod
@@ -24,7 +27,7 @@ class User(db.Model):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
-        except SignatureExpired or BadSignature:
+        except:
             return None
         user = User.query.get(data['id'])
         return user

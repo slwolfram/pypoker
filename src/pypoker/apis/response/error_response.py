@@ -45,25 +45,17 @@ class ErrorResponse(object):
 
 class BadRequestResponse(ErrorResponse):
     def __init__(self, errors):
-        ErrorResponse.__init__(
-            errors, 400
-        )
+        super().__init__(errors, 400)
 
 
 class UnauthorizedResponse(ErrorResponse):
     def __init__(self, errors):
-        ErrorResponse.__init__(
-            errors, 401
-        )
+        super().__init__(errors, 401)
 
 class NotFoundResponse(ErrorResponse):
     def __init__(self, errors):
-        ErrorResponse.__init__(
-            errors, 404
-        )
+        super().__init__(errors, 404)
 
 class InternalServerErrorResponse(ErrorResponse):
     def __init__(self, errors):
-        ErrorResponse.__init__(
-            errors, 500
-        )
+        super().__init__(errors, 500)

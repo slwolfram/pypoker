@@ -9,6 +9,7 @@ class Game(db.Model):
     name = db.Column(db.String, nullable=False)
     num_seats = db.Column(db.Integer, nullable=False)
     turn_time = db.Column(db.Integer, nullable=False)
+    blinds = db.Column(db.String, nullable=False)
     blind_levels = db.Column(db.String, nullable=False)
     blind_length = db.Column(db.String, nullable=False)
     buyin = db.Column(db.String, nullable=False)
@@ -20,6 +21,9 @@ class Game(db.Model):
 
 
     def as_dict(self):
+        player_dict = []
+        for p in self.players:
+            player_dict.append(p.as_dict())
         return {
             'ID': self.id,
             'Name': self.name,
@@ -30,9 +34,9 @@ class Game(db.Model):
             'Buyin': self.buyin,
             'Type': self.gtype,
             'StartTime': (
-                self.start_time.strftime("%m/%d/%Y, %H:%M:%S"))
+                self.start_time.strftime("%m/%d/%Y, %H:%M:%S")),
+            'Players': player_dict
         }
-
 
     def create(self):
         self.deck = str(Deck())
@@ -46,7 +50,7 @@ class Game(db.Model):
         except Exception as e:
             print(repr(e))
         return None
-
+        
 
     @staticmethod
     def fetch(**kwargs):
@@ -60,7 +64,6 @@ class Game(db.Model):
         except:
             pass
         return None
-
 
     @staticmethod
     def fetch_all():

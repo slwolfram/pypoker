@@ -10,9 +10,9 @@ class ValidResponse(object):
 
 class OKResponse(ValidResponse):
     def __init__(self, data):
-        ValidResponse.__init__(data, 200)
+        super().__init__(data, 200)
 
 
 class CreatedResponse(ValidResponse):
     def __init__(self, data):
-        ValidResponse.__init__(data, 201)
+        super().__init__(data, 201)
