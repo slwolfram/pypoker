@@ -39,8 +39,13 @@ class ErrorResponse(object):
         self.code = code
 
     def get_response(self):
-        return {'errors': self.errors}, self.code, (
-               {'Access-Control-Allow-Origin': '*'})
+        print("getting response...")
+        errors = [e.as_dict() for e in self.errors]
+        return {'errors': errors}, self.code, (
+               {'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Origin, Authorization, Content-Type',
+                'Access-Control-Allow-Methods': 'POST'
+               })
 
 
 class BadRequestResponse(ErrorResponse):

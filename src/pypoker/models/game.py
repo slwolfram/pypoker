@@ -10,7 +10,7 @@ class Game(db.Model):
     num_seats = db.Column(db.Integer, nullable=False)
     turn_time = db.Column(db.Integer, nullable=False)
     blinds = db.Column(db.String, nullable=False)
-    blind_levels = db.Column(db.String, nullable=False)
+    blind_level = db.Column(db.Integer, nullable=False)
     blind_length = db.Column(db.String, nullable=False)
     buyin = db.Column(db.String, nullable=False)
     gtype = db.Column(db.String, nullable=False)
@@ -18,7 +18,15 @@ class Game(db.Model):
     deck = db.Column(db.String, nullable=False)
     players = db.relationship('Player', back_populates='game')
 
+    def get_blinds(self):
+        blinds = self.blinds.split('|')
+        blinds = blinds[self.blind_level]
+        blinds = blinds.split(',')
+        return list(map(int, blinds))
 
+    def get_buyin(self):
+        buyin = ["",""] if self.buyin == "" else self.buyin.split('-')
+        return buyin
 
     def as_dict(self):
         player_dict = []
@@ -29,10 +37,9 @@ class Game(db.Model):
             'Name': self.name,
             'NumSeats': self.num_seats,
             'TurnTime': self.turn_time,
-            'BlindLevels': self.blind_levels,
-            'BlindLength': self.blind_length,
-            'Buyin': self.buyin,
-            'Type': self.gtype,
+            'Blinds': self.get_blinds(),
+            'Buyin': self.get_buyin(),
+            'GameType': self.gtype,
             'StartTime': (
                 self.start_time.strftime("%m/%d/%Y, %H:%M:%S")),
             'Players': player_dict

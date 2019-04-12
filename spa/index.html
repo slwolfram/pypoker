@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<head>
+    <title>PyPoker</title>
+</head>
+<body ng-app="PyPoker">
+    <ul class="menu">
+        <li><a href="#!/dashboard">dashboard</a></li>
+        <li><a href="#!/login">login</a></li>
+    </ul>
+    <hr>
+    <div ng-view></div>
+
+    <script src="assets/lib/angular.min.js"></script>
+    <script src="assets/lib/angular-route.min.js"></script>
+    <script src="assets/lib/angular-messages.min.js"></script>
+    <script src="app.js"></script>
+    <script src="app/components/login/loginController.js"></script>
+    <script src="app/components/dashboard/dashboardController.js"></script>
+</body>
+</html>

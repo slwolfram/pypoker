@@ -1,7 +1,0 @@
-{
-    "python.pythonPath": "venv/bin/python",
-    "git.ignoreLimitWarning": true,
-    "files.exclude": {
-        "**/*.pyc": true
-    }
-}

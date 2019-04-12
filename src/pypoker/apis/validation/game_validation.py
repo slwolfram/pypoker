@@ -13,10 +13,10 @@ def validate_game(data):
     num_seats = 0
     turn_time = -1
     blinds = ""
-    blind_levels = []
+    blind_level = 0
     blind_length = ""
     buyin = ""
-    gtype = ""
+    gtype = "CASHGAME"
     start_time = datetime.now()
 
     # Name
@@ -39,35 +39,38 @@ def validate_game(data):
         num_seats = data['NumSeats']
     # TurnTime
     turn_time = data['TurnTime'] if 'TurnTime' in data else -1
-    # BlindLevels
-    if 'BlindLevels' not in data:
+    # Blinds
+    if 'Blinds' not in data:
         errors.append(Error(
-            source="game.BlindLevels",
+            source="game.Blinds",
             title="Missing required attribute",
-            detail="'BlindLevels' is required"
+            detail="'Blinds' is required"
         ))
     else:
-        blind_levels = data['BlindLevels']
-        blind_levels = blind_levels.split(',')
-        for level in blind_levels:
-            l = level.split('_')
-            if len(l) != 3 or l[0] != 'BLIND':
-                errors.append(Error(
-                    source="game.BlindLevels",
-                    title="Invalid attribute",
-                    detail="BlindLevel format: BLIND_SB_BB"
-                ))
-            if int(l[1]) >= int(l[2]):
-                errors.append(Error(
-                    source="game.BlindLevels",
-                    title="Invalid attribute",
-                    detail="BlindLevel - BB must be > SB"
-                ))
-        blind_levels = '|'.join(blind_levels)
-        blind_levels = blind_levels.replace('BLIND_', '')
-        blind_levels = blind_levels.replace('_', ',')
-        blinds = blind_levels.split('|')
-        blinds = blinds[0]
+        blinds = data['Blinds']
+        blinds = blinds.split('|')
+        try:
+            for level in blinds:
+                l = level.split(',')
+                if len(l) != 2:
+                    errors.append(Error(
+                        source="game.Blinds",
+                        title="Invalid attribute",
+                        detail="Format: 'SB,BB'"
+                    ))
+                elif int(l[0]) >= int(l[1]):
+                    errors.append(Error(
+                        source="game.Blinds",
+                        title="Invalid attribute",
+                        detail="Blinds - BB must be > SB"
+                    ))
+            blinds = '|'.join(blinds)
+        except:
+            errors.append(Error(
+                source="game.Blinds",
+                title="Invalid attribute",
+                detail="Blind format: 'SB,BB'"
+            ))
     # BlindLength
     if 'BlindLength' in data:
         blind_length = data['BlindLength']
@@ -84,49 +87,57 @@ def validate_game(data):
             errors.append(Error(
                 source="game.BlindLength",
                 title="Invalid attribute",
-                detail=
-"BlindLength format: MIN_N or TRN_N (N must be an int!)"
+                detail="BlindLength format: MIN_N or TRN_N"
+                       "(N must be an int!)"
             ))
     # Buyin
-    if 'Buyin' in data:
+    
+    if 'Buyin' not in data:
+        errors.append(Error(
+            source="game.Buyin",
+            title="Missing required attribute",
+            detail="'Buyin' is required"
+        ))
+    else:
         buyin = data['Buyin']
-        try:
-            b = buyin.split('_')
-            if len(b) != 3:
+        if buyin != "":
+            try:
+                b = buyin.split('-')
+                if len(b) != 2:
+                    errors.append(Error(
+                        source="game.Buyin",
+                        title="Invalid attribute",
+                        detail="Buyin format: BUYIN_MIN_MAX"
+                    ))
+                if int(b[0]) > int(b[1]):
+                    errors.append(Error(
+                        source="game.Buyin",
+                        title="Invalid attribute",
+                        detail="Buyin: Max buyin can't be < Min buyin"
+                    ))
+                if int(b[0]) <= 0 or int(b[1]) <= 0:
+                    errors.append(Error(
+                        source="game.Buyin",
+                        title="Invalid attribute",
+                        detail="Buyin: Values must be > 0"
+                    ))
+            except:
                 errors.append(Error(
                     source="game.Buyin",
                     title="Invalid attribute",
-                    detail="Buyin format: BUYIN_MIN_MAX"
+                    detail="Buyin format: BUYIN_MIN_MAX - 'MIN' and"
+                        " 'MAX' must be integers"
                 ))
-            if b[0] != 'BUYIN':
-                errors.append(Error(
-                    source="game.Buyin",
-                    title="Invalid attribute",
-                    detail=
-"Buyin format: BUYIN_MIN_MAX - missing 'BUYIN'"
-                ))
-            if int(b[1]) > int(b[2]):
-                errors.append(Error(
-                    source="game.Buyin",
-                    title="Invalid attribute",
-                    detail="Buyin: Max buyin can't be < Min buyin"
-                ))
-        except:
-            errors.append(Error(
-                source="game.Buyin",
-                title="Invalid attribute",
-                detail=
-"Buyin format: BUYIN_MIN_MAX - 'MIN' and 'MAX' must be integers"
-            ))
     # GameType
     if 'GameType' in data:
         gtype = data['GameType']
+        if gtype == "": gtype = 'CASHGAME'
         if gtype != 'CASHGAME' and gtype != 'TOURNAMENT':
             errors.append(Error(
                 source="game.GameType",
                 title="Invalid attribute",
-                detail=
-"GameType format: accepts CASHGAME or TOURNAMENT"
+                detail="GameType format: accepts CASHGAME or"
+                       " TOURNAMENT"
             ))
     # StartTime
     if 'StartTime' in data:
@@ -140,9 +151,10 @@ def validate_game(data):
             ))
     if len(errors) != 0:
         return BadRequestResponse(errors)
-    game = Game(name=name, num_seats=num_seats, turn_time=turn_time, 
-                blind_levels=blind_levels, blinds=blinds, blind_length=blind_length,
-                buyin=buyin, gtype=gtype, start_time=start_time)
+    game = Game(name=name, num_seats=num_seats, turn_time=turn_time,
+                blinds=blinds, blind_level=blind_level,
+                blind_length=blind_length, buyin=buyin,
+                gtype=gtype, start_time=start_time)
     print('HERE2')
     if not game.create():
         return InternalServerErrorResponse([Error(

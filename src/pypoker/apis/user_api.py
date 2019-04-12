@@ -1,15 +1,14 @@
 from flask import Flask, Blueprint, request, jsonify
 from flask_httpauth import HTTPBasicAuth
 from flask_restplus import Api, Resource, fields, Namespace
-
+from .api_decorators import token_required
 from ..models.player import Player
 from .validation.player_validation import validate_player
-from .validation.response import bad_request, good_request
-from .decorators import token_required
 from pypoker.models.user import User
 
 
 api = Namespace('users', description='User related operations')
+
 
 
 @api.route('/all')

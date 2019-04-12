@@ -69,16 +69,7 @@ def validate_new_user(data):
     # Nickname
     if 'Nickname' in data:
         nickname = data['Nickname']
-    # Bankroll
-    if 'Bankroll' in data:
-        try:
-            bankroll = int(data['Bankroll'])
-        except:
-            errors.append(Error(
-                source="user.Bankroll",
-                title="Invalid Attribute",
-                detail="Request field 'Bankroll' must be an integer"
-            ))
+    
     if len(errors) != 0:
         return BadRequestResponse(errors)
     user = User(username=username, password_hash="", email=email,

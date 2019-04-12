@@ -1,11 +1,13 @@
 import os
 import datetime
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS
 from flask_restplus import Api, Resource, fields
 from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../pypoker.db'
 db = SQLAlchemy(app)

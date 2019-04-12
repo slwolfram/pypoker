@@ -5,7 +5,10 @@ class ValidResponse(object):
 
     def get_response(self):
         return {'data': self.data}, self.code, (
-               {'Access-Control-Allow-Origin': '*'})
+               {'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Origin, Authorization, Content-Type',
+                'Access-Control-Allow-Methods': 'POST'
+               })
 
 
 class OKResponse(ValidResponse):

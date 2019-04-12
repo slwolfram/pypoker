@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_restplus import Api
 from .auth_api import api as auth_ns
 from .game_api import api as game_ns
