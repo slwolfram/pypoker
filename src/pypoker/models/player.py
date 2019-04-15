@@ -3,6 +3,7 @@ from pypoker import db
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    identifier = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
     stack = db.Column(db.Integer, nullable=False)
     hand = db.Column(db.String, nullable=False)
@@ -17,6 +18,15 @@ class Player(db.Model):
     user = db.relationship('User', back_populates='players')
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     game = db.relationship('Game', back_populates='players')
+    player_actions = db.relationship(
+        'Player', back_populates='player_actions'
+    )
+    player_states = db.relationship(
+        'Player', back_populates='player_states'
+    )
+    entered_dttm = db.Column(db.DateTime, nullable=False)
+    update_dttm = db.Column(db.DateTime, nullable=False)
+    
 
 
     def __str__(self):

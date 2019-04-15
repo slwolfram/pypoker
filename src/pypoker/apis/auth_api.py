@@ -4,11 +4,6 @@ from flask_restplus import (
 from .api_decorators import token_required
 from ..models.user import User
 from .api_decorators import token_required
-from .validation.user_validation import (
-    validate_new_user, validate_user_login)
-from .response.error_response import (
-    BadRequestResponse, UnauthorizedResponse, Error)
-from .response.valid_response import OKResponse
 
 
 api = Namespace(
@@ -18,18 +13,18 @@ api = Namespace(
 register_parser = api.parser()
 register_parser.add_argument(
     'Username', 
-    type=str, 
+    type=inputs.regex('^[a-zA-Z][a-zA-Z0-9\.]{1,16}$'),
     required=True, location='form')
 register_parser.add_argument(
     'Password', 
-    type=str, 
+    type=inputs.regex('^[A-Za-z0-9@\!\?\$\-\_\.\*\(\)]{4,24}$'),
     required=True, location='form')
 register_parser.add_argument('Email', 
-    type=str, 
+    type=inputs.regex('^[a-zA-Z][a-zA-Z0-9@\.]{1,16}$'),
     required=True, location='form')
 register_parser.add_argument(
     'Nickname', 
-    type=str, 
+    type=inputs.regex('^[A-Za-z0-9@\!\?\$\-\_\.\*\(\)]{1,24}$'),
     location='form')
 
 @api.route("/register")
@@ -48,7 +43,7 @@ login_parser.add_argument(
     required=True, help='Username or Email', location='form')
 login_parser.add_argument(
     'Password', 
-    type=inputs.regex('^[A-Za-z0-9@\!\?\$\-\_\.\*\(\)]{8,24}$'),
+    type=inputs.regex('^[A-Za-z0-9@\!\?\$\-\_\.\*\(\)]{4,24}$'),
     required=True, location='form')
 
 @api.route("/login")
@@ -72,5 +67,4 @@ class login(Resource):
                 detail='Invalid password'
             )])
             return r.get_response()
-        r = OKResponse(data=user.generate_auth_token())
-        return r.get_response()
+        return {'token': user.generate_auth_token()}, 200

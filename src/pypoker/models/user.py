@@ -7,12 +7,16 @@ from pypoker import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    identifier = db.Column(db.String, nullable=False)
     username = db.Column(db.String, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
     nickname = db.Column(db.String)
     bankroll = db.Column(db.Integer, nullable=False)
-    players = db.relationship("Player", back_populates="user")
+    players = db.relationship('Player', back_populates='user')
+    player_actions = db.relationship('PlayerAction', back_populates='user')
+    created_dttm = db.Column(db.DateTime, nullable=False)
+
 
     def generate_auth_token(self, expiration=6000):
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)

@@ -1,0 +1,23 @@
+<div ng-controller="GamesCtrl">
+    <h2>Tables</h4>
+    <table>
+    <tr>
+        <th>Name</th>
+        <th>Format</th>
+        <th>Seats</th>
+        <th>Blinds</th>
+        <th>Min-Buyin</th>
+        <th>Max-Buyin</th>
+    </tr>
+    <tr ng-repeat = "game in games | orderBy: 'Blinds[0]'">
+        <td>{{ game.Name }}</td>
+        <td>{{ game.GameType }}</td>
+        <td>{{ game.Players.length + "/" + game.NumSeats }}</td>
+        <td>{{ game.Blinds[0] + "/" + game.Blinds[1] }}</td>
+        <td>{{ game.Buyin[0] | currency}}</td>
+        <td>{{ game.Buyin[1] | currency}}</td>
+    </tr>
+    </table>
+    <br>
+    <input type="button" value="Create New Table" />
+</div>

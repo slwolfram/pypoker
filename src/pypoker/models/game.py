@@ -6,6 +6,7 @@ from pypoker.deck import Deck
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    identifier = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
     num_seats = db.Column(db.Integer, nullable=False)
     turn_time = db.Column(db.Integer, nullable=False)
@@ -13,10 +14,16 @@ class Game(db.Model):
     blind_level = db.Column(db.Integer, nullable=False)
     blind_length = db.Column(db.String, nullable=False)
     buyin = db.Column(db.String, nullable=False)
-    gtype = db.Column(db.String, nullable=False)
+    game_type = db.Column(db.String, nullable=False)
+    game_format = db.Column(db.String, nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     deck = db.Column(db.String, nullable=False)
     players = db.relationship('Player', back_populates='game')
+    game_state = db.relationship('GameState', back_populates='game')
+    game_round = db.Column(db.Integer, nullable=False)
+    created_dttm = db.Column(db.DateTime, nullable=False)
+    update_dttm = db.Column(db.DateTime, nullable=False)
+
 
     def get_blinds(self):
         blinds = self.blinds.split('|')
@@ -39,7 +46,8 @@ class Game(db.Model):
             'TurnTime': self.turn_time,
             'Blinds': self.get_blinds(),
             'Buyin': self.get_buyin(),
-            'GameType': self.gtype,
+            'GameType': self.game_type,
+            'GameFormat': self.game_format,
             'StartTime': (
                 self.start_time.strftime("%m/%d/%Y, %H:%M:%S")),
             'Players': player_dict

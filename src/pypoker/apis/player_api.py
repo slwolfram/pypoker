@@ -2,11 +2,7 @@ from flask import Flask, Blueprint, request, jsonify
 from flask_httpauth import HTTPBasicAuth
 from flask_restplus import Api, Resource, fields, Namespace
 from ..models.player import Player
-from .validation.player_validation import validate_player
 from .api_decorators import token_required
-from .response.error_response import (
-    BadRequestResponse, InternalServerErrorResponse, Error)
-from .response.valid_response import OKResponse
 from pypoker.models.user import User
 
 

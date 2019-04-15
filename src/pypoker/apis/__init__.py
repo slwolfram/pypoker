@@ -15,7 +15,7 @@ api = Api(blueprint,
             {
                 'type': 'apiKey',
                 'in': 'header',
-                'name': 'X-API-Key'
+                'name': 'Authorization'
             }
 })
 
