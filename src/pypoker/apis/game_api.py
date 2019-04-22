@@ -4,6 +4,8 @@ from flask_restplus import (
 from datetime import datetime
 from .api_decorators import token_required
 from ..models.game import Game
+from ..models.game_state import GameState
+from ..models.table_state import TableState
 
 
 api = Namespace('games', description='Game related operations')
@@ -110,16 +112,15 @@ class new_game(Resource):
                     'errors': {'StartTime': 'Invalid value.'},
                     'message': 'StartTime must be in the future'
                 }, 400
-        game = Game(name=name, 
-                    num_seats=num_seats, 
-                    turn_time=turn_time, 
-                    blinds=blinds, 
-                    blind_level=0, 
-                    blind_length=blind_length, 
-                    buyin=buyin, 
-                    game_type=game_type, 
-                    game_format=game_format, 
-                    start_time=start_time)
+        game = Game(name, 
+                    num_seats, 
+                    turn_time, 
+                    blinds, 
+                    blind_length, 
+                    buyin, 
+                    game_type, 
+                    game_format,
+                    start_time)
         if not game.create():
             return {
                 'errors': {'error': 'Internal Server Error'},
@@ -127,6 +128,33 @@ class new_game(Resource):
             }, 500
         return {"data": game.as_dict()}, 200
 
+
+@api.route('/<string:guid>')
+class game(Resource):
+
+    @api.doc(security='apikey')
+    @token_required
+    def delete(self, guid):
+        game = Game.fetch(guid=guid)
+        if game.delete() == True:
+            return {'message': 'Successfully deleted game.'}, 200
+        else:
+            return {'error': "Couldn't delete game"}, 400
+    def get(self, guid):
+        game = Game.fetch(guid=guid)
+        if game is None:
+            return \
+                {
+                    'errors': {'id': 'No matching game id in db'},
+                    'message': 'Unable to fetch resource.'
+                }, 400
+        if game is -1:
+            return \
+                {
+                    'errors': {'error': 'Internal Server Error'},
+                    'message': 'Internal Server Error'
+                }, 500
+        return {'data': game.as_dict()}, 200
 
 @api.route('/all')
 class get_games(Resource):
@@ -142,22 +170,3 @@ class get_games(Resource):
         for game in games:
             games_dict.append(game.as_dict())
         return {'data': games_dict}, 200
-
-
-@api.route('/<int:id>')
-class get_game(Resource):
-    def get(self, id):
-        game = Game.fetch(id=id)
-        if game is None:
-            return \
-                {
-                    'errors': {'id': 'No matching game id in db'},
-                    'message': 'Unable to fetch resource.'
-                }, 400
-        if game is -1:
-            return \
-                {
-                    'errors': {'error': 'Internal Server Error'},
-                    'message': 'Internal Server Error'
-                }, 500
-        return {'data': game.as_dict()}, 200

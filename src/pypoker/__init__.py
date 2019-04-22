@@ -12,10 +12,13 @@ app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../pypoker.db'
 db = SQLAlchemy(app)
 
+
 from pypoker.apis import blueprint as api
 db.create_all()
 
+
 app.register_blueprint(api, url_prefix='/api')
+
 
 if __name__ == "__main__":
     app.run()

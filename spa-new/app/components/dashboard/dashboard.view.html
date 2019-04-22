@@ -1,0 +1,41 @@
+<div class="container">
+<div class="col-md-12">
+    <hr>
+    <h2 class="text-center">Tables</h4>
+    <hr>
+    <table st-table="displayedGames" 
+           st-safe-src="vm.games" 
+           class="table table-striped table-hover">
+        <thead class="text-center">
+        <tr>
+            <th>Name</th>
+            <th>Format</th>
+            <th>Seats</th>
+            <th>Blinds</th>
+            <th>Min-Buyin</th>
+            <th>Max-Buyin</th>
+        </tr>
+        <tr>
+            <th colspan="7"><input 
+                st-search=""
+                class="form-control" 
+                placeholder="global search ..." 
+                type="text"/>
+            </th>
+        </tr>
+        </thead>
+        <tbody class="text-center">
+        <tr ng-repeat = "game in displayedGames | orderBy: 'Blinds[0]'" 
+            such-href="/game/{{ game.GUID }}" 
+            class='table-row'>
+            <td>{{ game.Name }}</td>
+            <td>{{ game.GameType }}</td>
+            <td>{{ game.Players.length + "/" + game.NumSeats }}</td>
+            <td>{{ game.Blinds[0] }}</td>
+            <td>{{ game.Buyin[0] | currency}}</td>
+            <td>{{ game.Buyin[1] | currency}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>

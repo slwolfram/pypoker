@@ -23,7 +23,7 @@
                     vm.error = 'Username or Password is incorrect';
                     vm.loading = false;
                 }
-            })
+            });
         }
     }
 })();
