@@ -1,0 +1,102 @@
+/* Global */
+
+* {
+    font-size: 14px;
+    line-height: 2;
+ }
+
+html, body {
+    height: 100%; /* important to vertically align the container */
+    margin: 0;
+    padding: 0;
+}
+
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one <img draggable="false" class="emoji" alt="🙂" src="https://s.w.org/images/core/emoji/72x72/1f642.png">       */
+    display: flex;
+    align-items: center;
+}
+
+.horizontal-center {
+    margin: auto;
+    width: 50%;
+}
+
+.well {
+    margin: 0px;
+    padding: 2px;
+}
+
+.row {
+    justify-content: center;
+}
+
+
+/* Login */
+
+.login-form {
+    width: 260px;
+}
+
+/* Register */
+
+.register-form {
+    width: 260px;
+}
+
+/* Game */
+
+/* Table */
+
+.table-container {
+    margin: 1.5%;
+    min-width: 200px;
+}
+
+.table-contents {
+
+}
+
+.table-well {
+    height: 100px;
+    padding-top: 2%;
+}
+
+.table-row {
+    cursor: pointer;
+}
+
+.p-card {
+    min-height: 35px;
+    min-width: 25px;
+    margin: 1%;
+}
+
+/* Board */
+
+/* Pot */
+
+.pot-container {
+}
+
+.pot-label {
+    padding: 2px;
+    text-align: right;
+}
+
+.pot-value {
+    margin: 0px;
+    padding: 2px;
+    text-align: left;
+}
+
+/* Player */
+
+.player-container {
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+
+

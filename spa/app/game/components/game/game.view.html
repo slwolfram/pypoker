@@ -1,0 +1,215 @@
+<div class="game-container">
+<div class="vertical-center">
+    <div class="container">
+        <!-- Heads Up -->
+        <span ng-if="vm.game.NumSeats==2">
+            <div class="row">
+                <div class="col-2 well">
+                    <player seatId="0"></player>
+                </div>
+            </div>
+            <div class="row">
+                <div class="table-container table-well col-4 well">
+                    <div class="board-container">
+                        <div class="row">
+                            <div class="col-1 well p-card"></div>
+                            <div class="col-1 well p-card"></div>
+                            <div class="col-1 well p-card"></div>
+                            <div class="col-1 well p-card"></div>
+                            <div class="col-1 well p-card"></div>
+                        </div>
+                    </div>
+                    <div class="pot-container">
+                        <div class="row">
+                            <div class="col-2 pot-label">Pot:</div>
+                            <div class="col-2 pot-value">1000</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2 well">
+                    <player seatId="1"></player>
+                </div>
+            </div>
+        </span>
+        <!-- 3 Max -->
+        <span ng-if="vm.game.NumSeats==3">
+            <div class="row">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row">
+                <div class="col-4 well"></div>
+            </div>
+            <div class="row">
+                <div class="col-2 well"></div>
+            </div>
+        </span>
+        <!-- 4 Max -->
+        <span ng-if="vm.game.NumSeats==4">
+            <div class="row">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row">
+                <div class="col-4 well"></div>
+            </div>
+            <div class="row">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+        </span>
+        <!-- 5 Max -->
+        <span ng-if="vm.game.NumSeats==5">
+            <div class="row">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row">
+                <div class="col-4 well"></div>
+            </div>
+            <div class="row">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+        </span>
+
+        <!-- 6 Max -->
+        <span ng-if="vm.game.NumSeats==6">
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-4 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+        </span>
+        <!-- 7 Max -->
+        <span ng-if="vm.game.NumSeats==7">
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-4 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+        </span>
+        <!-- 8 Max -->
+        <span ng-if="vm.game.NumSeats==8">
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-4 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+        </span>
+        <!-- 9 Max -->
+        <span ng-if="vm.game.NumSeats==9">
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-4 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+        </span>
+        <!-- 10 Max -->
+        <span ng-if="vm.game.NumSeats==10">
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-4 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset well"></div>
+            </div>
+        </span>
+        <!-- 11 Max -->
+        <span ng-if="vm.game.NumSeats==11">
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-4 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset-1 well"></div>
+                <div class="col-2 offset well"></div>
+            </div>
+        </span>
+        <!-- 12 Max -->
+        <span ng-if="vm.game.NumSeats==12">
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 well"></div>
+                <div class="col-4 offset-1 well"></div>
+                <div class="col-2 offset-1 well"></div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+                <div class="col-2 offset well"></div>
+            </div>
+        </span>
+  </div>
+</div>
+</div>
