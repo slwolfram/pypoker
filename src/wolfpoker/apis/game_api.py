@@ -2,7 +2,8 @@ from flask import Flask, Blueprint, jsonify
 from flask_restplus import (
     Api, Resource, fields, Namespace, inputs)
 from datetime import datetime
-from .api_decorators import token_required
+from .decorators.token_required import token_required
+from .decorators.catch_api_exceptions import catch_api_exceptions
 from ..models.game import Game
 from ..models.game_state import GameState
 from ..models.table_state import TableState
@@ -59,7 +60,7 @@ game_parser.add_argument(
     " supported.")
 game_parser.add_argument(
     'Buyin', 
-    type=inputs.regex('^[1-9][0-9]*-[1-9][0-9]*$'), 
+    type=inputs.regex('^[1-9][0-9]*,[1-9][0-9]*$'), 
     required=True, 
     location='form', 
     help="The range of currency the player may start the game with."
@@ -75,8 +76,9 @@ game_parser.add_argument(
 @api.route('/new')
 class new_game(Resource):
     @api.doc(security='apikey', parser=game_parser)
+    @catch_api_exceptions
     @token_required
-    def post(self):
+    def post(self, **kwargs):
         data = game_parser.parse_args()
         name = data['Name']
         num_seats = data['NumSeats']
@@ -89,84 +91,70 @@ class new_game(Resource):
         game_format = data['GameFormat'] \
             if data['GameFormat'] else 'CASHGAME'
         buyin = data['Buyin']
-        buyin_v = buyin.split('-')
-        if (int(buyin_v[0]) > int(buyin_v[1])):
-            return {
-                'errors': {'Buyin': 'Invalid value.'},
-                'message': 'Min Buyin must be less than or equal to'
-                           ' Max Buyin'
-                }, 400
+        buyin_v = buyin.split(',')
+        if (int(buyin_v[0]) > int(buyin_v[1])): return (
+                {
+                    'errors': {'Buyin': 'Invalid value.'},
+                    'message': 'Min Buyin must be LTE to Max Buyin'
+                }, 400)
         start_time =  datetime.now()
         if (data['StartTime']):
             try:
                 start_time = datetime.strptime(
                     data['StartTime'], '%Y-%m-%d %H:%M:%S')
-            except:
-                return {
+            except: return (
+                {
                     'errors': {'StartTime': 'Invalid value.'},
                     'message': '{} is not a valid date/time'.format(
                         data['StartTime'])
-                }, 400
-            if (start_time < datetime.now()):
-                return {
+                }, 400)
+            if (start_time < datetime.now()): return (
+                {
                     'errors': {'StartTime': 'Invalid value.'},
                     'message': 'StartTime must be in the future'
-                }, 400
-        game = Game(name, 
-                    num_seats, 
-                    turn_time, 
-                    blinds, 
-                    blind_length, 
-                    buyin, 
-                    game_type, 
-                    game_format,
-                    start_time)
-        if not game.create():
-            return {
-                'errors': {'error': 'Internal Server Error'},
-                'message': 'Game could not be created'
-            }, 500
+                }, 400)
+        game = Game(name, num_seats, turn_time, blinds, blind_length, 
+                    buyin, game_type, game_format, start_time).create()
         return {"data": game.as_dict()}, 200
 
 
 @api.route('/<string:guid>')
 class game(Resource):
-
     @api.doc(security='apikey')
+    @catch_api_exceptions
     @token_required
-    def delete(self, guid):
+    def delete(self, guid, **kwargs):
         game = Game.fetch(guid=guid)
         if game.delete() == True:
             return {'message': 'Successfully deleted game.'}, 200
         else:
             return {'error': "Couldn't delete game"}, 400
+
+
+    @catch_api_exceptions
     def get(self, guid):
         game = Game.fetch(guid=guid)
-        if game is None:
-            return \
-                {
-                    'errors': {'id': 'No matching game id in db'},
-                    'message': 'Unable to fetch resource.'
-                }, 400
-        if game is -1:
-            return \
-                {
-                    'errors': {'error': 'Internal Server Error'},
-                    'message': 'Internal Server Error'
-                }, 500
+        if game is None: return (
+            {
+                'errors': {'id': 'No matching game id in db'},
+                'message': 'Unable to fetch resource.'
+            }, 400)
         return {'data': game.as_dict()}, 200
+
 
 @api.route('/all')
 class get_games(Resource):
+    @catch_api_exceptions
     def get(self):
         games = Game.query.all()
-        if games is None:
-            return \
-                {
-                    'errors': {'error': 'Internal Server Error'},
-                    'message': 'Internal Server Error'
-                }, 500
-        games_dict = []
-        for game in games:
-            games_dict.append(game.as_dict())
+        games_dict = [g.as_dict for g in games]
         return {'data': games_dict}, 200
+
+
+@api.route('<string:game_guid>/join/<int:seat_id>')
+class join_game(Resource):
+    @api.doc(security='apikey')
+    @catch_api_exceptions
+    @token_required
+    def get(self, game_guid, seat_id, **kwargs):
+        pass

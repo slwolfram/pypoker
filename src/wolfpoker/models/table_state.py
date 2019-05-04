@@ -16,13 +16,19 @@ class TableState(db.Model):
         self.pot = 0
         self.deck = str(Deck())
         self.board = ""
-        self.create_dttm = datetime.now()
 
 
     def as_dict(self):
-        return {
-            'ID': self.id,
-            'Pot': self.pot,
-            'Deck': self.deck,
-            'Board': self.board
-        }
+        return (
+            {
+                'Pot': self.pot,
+                'Deck': self.deck,
+                'Board': self.board
+            })
+
+
+    def make_copy(self):
+        cpy = TableState()
+        cpy.pot = self.pot
+        cpy.deck = self.deck
+        cpy.board = self.board

@@ -1,7 +1,8 @@
 from flask import Flask, Blueprint, current_app, jsonify, request
 from flask_restplus import (
     Resource, fields, Namespace, reqparse, inputs)
-from .api_decorators import token_required
+from .decorators.token_required import token_required
+from .decorators.catch_api_exceptions import catch_api_exceptions
 from ..models.user import User
 
 
@@ -29,18 +30,13 @@ register_parser.add_argument(
 @api.route("/register")
 class Register(Resource):
     @api.doc(parser=register_parser)
+    @catch_api_exceptions
     def post(self):
         data = register_parser.parse_args()
-        user = User(data['Username'], 
-                    data['Password'],
-                    data['Email'],
-                    screen_name=data['ScreenName'])
-        if not user.create():
-            return {
-                'errors': 
-                    {'error': 'Internal Server Error'},
-                'message': 'User could not be created'
-            }, 500
+        if data['ScreenName'] in [None, '']: 
+            data['ScreenName'] = data['Username']
+        user = User(data['Username'], data['Password'], 
+                    data['Email'], data['ScreenName']).create()
         return {'data': user.as_dict()}, 200
 
 
@@ -57,29 +53,35 @@ login_parser.add_argument(
 @api.route("/login")
 class Login(Resource):
     @api.doc(parser=login_parser)
+    @catch_api_exceptions
     def post(self):
         data = login_parser.parse_args()
         password = data['Password']  
         user = User.fetch(email=data['Identifier']) \
             if '@' in data['Identifier'] \
             else User.fetch(username=data['Identifier'])
-        if user is None:
-            return {
-                'errors': {'Identifier': 'User does not exist'},
-                'message': 'Invalid username or email'
-                }, 401
-        if not user.verify_password(password):
-            return {
-                'errors': {'Password': 'Invalid password'},
-                'message': 'Invalid password'
-                }, 401
-        return {'token': user.generate_auth_token()}, 200
+        if user is None: return (
+                {
+                    'errors': {'Identifier': 'User does not exist'},
+                    'message': 'Invalid username or email'
+                }, 401)
+        if not user.verify_password(password): return (
+                {
+                    'errors': {'Password': 'Invalid password'},
+                    'message': 'Invalid password'
+                }, 401)
+        return (
+            {
+                'token': user.generate_auth_token(),
+                'user': user.as_dict()
+            }, 200)
 
 
 @api.route("/check-login")
 class CheckLogin(Resource):
     @api.doc(security='apikey')
     @token_required
-    def get(self):
+    @catch_api_exceptions
+    def get(self, **kwargs):
         return {'message': 'User is logged in'}, 200
 

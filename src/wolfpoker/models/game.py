@@ -19,10 +19,9 @@ class Game(db.Model):
     game_format = db.Column(db.String, nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     players = db.relationship('Player', back_populates='game')
-    game_state_current = db.relationship(
+    current_state = db.relationship(
         'GameState', uselist=False, back_populates='game')
-    game_state_history = db.relationship('GameState')
-
+    state_history = db.relationship('GameState')
     create_dttm = db.Column(db.DateTime, nullable=False)
     update_dttm = db.Column(db.DateTime, nullable=False)
 
@@ -40,7 +39,31 @@ class Game(db.Model):
         self.game_format = game_format
         self.start_time = start_time
         self.guid = str(uuid4().hex)
-        self.game_state_current = GameState()
+        self.current_state = GameState()
+
+
+    def create(self):
+        self.create_dttm = \
+            self.update_dttm = self.current_state.create_dttm = \
+            self.current_state.table_state.create_dttm = datetime.now()
+        db.session.add(self)
+        db.session.commit()
+        self = self.fetch(guid=self.guid)
+        return self
+
+
+    @staticmethod
+    def fetch(**kwargs):
+        if 'id' in kwargs: return (
+            Game.query.filter_by(id=int(kwargs['id'])).first())           
+        elif 'guid' in kwargs: return (
+            Game.query.filter_by(guid=kwargs['guid']).first())
+        return None
+
+
+    @staticmethod
+    def fetch_all():
+        return Game.query.all()
 
 
     def get_buyin(self):
@@ -48,71 +71,28 @@ class Game(db.Model):
         return buyin
 
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
     def as_dict(self):
         player_dict = [p.as_dict() for p in self.players]
-        game_state_dict = self.game_state_current.as_dict()
-        return {
-            'GUID': self.guid,
-            'Name': self.name,
-            'NumSeats': self.num_seats,
-            'TurnTime': self.turn_time,
-            'Blinds': self.blinds.split('|'),
-            'Buyin': self.get_buyin(),
-            'GameType': self.game_type,
-            'GameFormat': self.game_format,
-            'Players': player_dict,
-            'StartTime': self.start_time
-                             .strftime("%m/%d/%Y, %H:%M:%S"),
-            'GameState': game_state_dict,
-            'UpdateDTTM': self.update_dttm
-                              .strftime("%m/%d/%Y, %H:%M:%S")
-        }
-
-
-    def create(self):
-        self.create_dttm = self.update_dttm = datetime.now()
-        try:
-            db.create_all()
-            db.session.add(self)
-            db.session.commit()
-            self = self.fetch(name=self.name)
-            return self
-        except Exception as e:
-            print(repr(e))
-        return None
-        
-
-    def delete(self):
-        try:
-            db.session.delete(self)
-            db.session.commit()
-            return True
-        except Exception as e:
-            print(repr(e))
-        return False
-
-
-    @staticmethod
-    def fetch(**kwargs):
-        try:
-            if 'id' in kwargs:
-                return Game.query.filter_by(
-                    id=int(kwargs['id'])).first()            
-            elif 'name' in kwargs:
-                return Game.query.filter_by(
-                    name=kwargs['name']).first()
-            elif 'guid' in kwargs:
-                return Game.query.filter_by(
-                    guid=kwargs['guid']).first()
-        except:
-            return -1
-        return None
-
-
-    @staticmethod
-    def fetch_all():
-        try:
-            return Game.query.all()
-        except:
-            pass
-        return None
+        game_state_dict = self.current_state.as_dict()
+        return (
+            {
+                'GUID': self.guid,
+                'Name': self.name,
+                'NumSeats': self.num_seats,
+                'TurnTime': self.turn_time,
+                'Blinds': self.blinds.split('|'),
+                'Buyin': self.get_buyin(),
+                'GameType': self.game_type,
+                'GameFormat': self.game_format,
+                'Players': player_dict,
+                'StartTime': (
+                    self.start_time.strftime("%m/%d/%Y, %H:%M:%S")),
+                'GameState': game_state_dict,
+                'UpdateDTTM': (
+                    self.update_dttm.strftime("%m/%d/%Y, %H:%M:%S"))
+            })

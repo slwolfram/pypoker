@@ -3,7 +3,7 @@ from wolfpoker import db
 
 class PlayerAction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    action = db.Column(db.String, nullable=False)
+    action_cd = db.Column(db.String, nullable=False)
     bet_amount = db.Column(db.Float, nullable=False)
     player_state_id = db.Column(
         db.Integer, db.ForeignKey('player_state.id'))  
@@ -12,8 +12,7 @@ class PlayerAction(db.Model):
 
     def as_dict(self):
         return {
-            'ID': self.id,
-            'Action': self.action,
+            'Action': self.action_cd,
             'BetAmount': self.bet_amount,
             'CreateDTTM': self.create_dttm
                               .strftime("%m/%d/%Y, %H:%M:%S")
