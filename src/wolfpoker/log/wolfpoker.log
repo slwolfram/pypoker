@@ -1,0 +1,47 @@
+2019-05-03 11:43:00,516 - flask.app - ERROR - Exception on /api/games/new [POST]
+Traceback (most recent call last):
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\catch_api_exceptions.py", line 8, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\token_required.py", line 21, in wrapper
+    return f(*args, **kwargs)
+NameError: name 'f' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\users\swolfc\desktop\workspace\python workspace\wolfpoker\src\venv\lib\site-packages\flask\app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\swolfc\desktop\workspace\python workspace\wolfpoker\src\venv\lib\site-packages\flask\app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "c:\users\swolfc\desktop\workspace\python workspace\wolfpoker\src\venv\lib\site-packages\flask_restplus\api.py", line 325, in wrapper
+    resp = resource(*args, **kwargs)
+  File "c:\users\swolfc\desktop\workspace\python workspace\wolfpoker\src\venv\lib\site-packages\flask\views.py", line 88, in view
+    return self.dispatch_request(*args, **kwargs)
+  File "c:\users\swolfc\desktop\workspace\python workspace\wolfpoker\src\venv\lib\site-packages\flask_restplus\resource.py", line 44, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\catch_api_exceptions.py", line 10, in wrapper
+    current_app.logger.exception()
+TypeError: exception() missing 1 required positional argument: 'msg'
+2019-05-03 11:44:24,052 - flask.app - ERROR - Exception
+Traceback (most recent call last):
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\catch_api_exceptions.py", line 8, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\token_required.py", line 21, in wrapper
+    return f(*args, **kwargs)
+NameError: name 'f' is not defined
+2019-05-03 11:46:06,295 - flask.app - ERROR - Exception
+Traceback (most recent call last):
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\catch_api_exceptions.py", line 8, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\token_required.py", line 21, in wrapper
+    return func(*args, **kwargs)
+TypeError: post() got an unexpected keyword argument 'token'
+2019-05-03 11:48:38,893 - flask.app - ERROR - Exception
+Traceback (most recent call last):
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\catch_api_exceptions.py", line 8, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\decorators\token_required.py", line 21, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\swolfc\Desktop\Workspace\Python Workspace\wolfpoker\src\wolfpoker\apis\game_api.py", line 126, in post
+    if not game.create():
+AttributeError: 'Game' object has no attribute 'create'

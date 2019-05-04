@@ -28,10 +28,28 @@ html, body {
     padding: 2px;
 }
 
+<<<<<<< HEAD
+.row-center {
+    justify-content: center;
+}
+
+.row-label {
+    padding: 2px;
+    text-align: right;
+}
+
+.row-value {
+    margin: 0px;
+    padding: 2px;
+    text-align: left;
+}
+
+=======
 .row {
     justify-content: center;
 }
 
+>>>>>>> 6b526b2baae0c5453fe57c6193eb2bf04f11e2c8
 
 /* Login */
 
@@ -80,6 +98,9 @@ html, body {
 .pot-container {
 }
 
+<<<<<<< HEAD
+
+=======
 .pot-label {
     padding: 2px;
     text-align: right;
@@ -90,6 +111,7 @@ html, body {
     padding: 2px;
     text-align: left;
 }
+>>>>>>> 6b526b2baae0c5453fe57c6193eb2bf04f11e2c8
 
 /* Player */
 
