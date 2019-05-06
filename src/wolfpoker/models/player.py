@@ -34,8 +34,10 @@ class Player(db.Model):
     def fetch(**kwargs):
         if 'id' in kwargs: return (
             Player.query.filter_by(id=int(kwargs['id'])).first())          
-        elif 'name' in kwargs: return (
-            Player.query.filter_by(name=kwargs['name']).first())
+        elif 'user_guid' in kwargs and 'game_guid' in kwargs: return (
+            Player.query.filter_by(
+                user_guid=kwargs['user_guid'], 
+                game_guid=kwargs['game_guid']).first())
         return None
 
 
@@ -56,3 +58,15 @@ class Player(db.Model):
                 'GameGUID': self.game_guid,
                 'State': current_state.as_dict()
             })
+
+
+    def new_state(self):
+        self.state_history.append(self.current_state)
+        self.current_state = self.current_state.make_copy()
+        self.game.new_state()
+        for p in self.game.current_state.player_states:
+            if p.player_id == self.id:
+                self.game.current_state.player_states.remove(p)
+                self.game.current_state.player_states.append(
+                                            self.current_state)
+        

@@ -72,7 +72,6 @@ game_parser.add_argument(
     help="When the game will start. If not specified, cashgames start"
     " when 2 or more players are active, and tournaments will start"
     " when the table is full.")
-
 @api.route('/new')
 class new_game(Resource):
     @api.doc(security='apikey', parser=game_parser)
@@ -151,10 +150,21 @@ class get_games(Resource):
         return {'data': games_dict}, 200
 
 
-@api.route('<string:game_guid>/join/<int:seat_id>')
+game_parser = api.parser()
+game_parser.add_argument(
+    'SeatID', 
+    type=int,
+    location='form', 
+    help='The seat id.')
+game_parser.add_argument(
+    'Stack', 
+    type=float,
+    location='form', 
+    help="The player's stack.")
+@api.route('/<string:game_guid>/join')
 class join_game(Resource):
     @api.doc(security='apikey')
     @catch_api_exceptions
     @token_required
-    def get(self, game_guid, seat_id, **kwargs):
+    def post(self, game_guid, seat_id, **kwargs):
         pass

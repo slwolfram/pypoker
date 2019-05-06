@@ -4,6 +4,7 @@ from datetime import datetime
 from wolfpoker import db
 from ..helper.deck import Deck
 from ..models.game_state import GameState
+from ..models.player import Player
 
 
 class Game(db.Model):
@@ -96,3 +97,32 @@ class Game(db.Model):
                 'UpdateDTTM': (
                     self.update_dttm.strftime("%m/%d/%Y, %H:%M:%S"))
             })
+
+
+    def new_state(self):
+        self.state_history.append(self.current_state)
+        self.current_state = self.current_state.make_copy()
+
+
+    def join(self, user, stack, **kwargs):
+        seat_id = kwargs['seat_id'] if 'seat_id' in kwargs else None
+        if len(self.players) == self.num_seats: 
+            return None
+        if seat_id:
+            if seat_id < len(self.players) and \
+                any(p.seat_id == seat_id \
+                or p.user_guid == user.guid \
+                for p in self.players): return None
+        else: 
+            for i in range(self.num_seats):
+                if not any(p.seat_id == i for p in self.players):
+                    seat_id = i
+        self.new_state()
+        user.bankroll -= stack
+        player = Player(stack, seat_id)
+        user.players.append(player)
+        self.players.append(player)
+        self.current_state.player_states.append(player.current_state)
+        db.session.commit()
+        return Player.fetch(
+            user_guid=self.user_guid, game_guid=self.game_guid)
